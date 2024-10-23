@@ -1,0 +1,805 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\begin_modules
+algorithm2e
+theorems-ams-chap-bytype
+theorems-ams-extended-chap-bytype
+todonotes
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Roomba in a Maze
+\end_layout
+
+\begin_layout Author
+Kolmogorov group members
+\end_layout
+
+\begin_layout Date
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+today{}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Original Version
+\end_layout
+
+\begin_layout Problem
+\begin_inset CommandInset label
+LatexCommand label
+name "prob:1-maze-rng-top-left"
+
+\end_inset
+
+Imagine that a roomba is placed in a rectangular maze where grid cells may
+ be separated by horizontal or vertical walls.
+\end_layout
+
+\begin_layout Problem
+You can remotely control the roomba by ordering it to move to a neighboring
+ cell in one of four cardinal directions.
+ If the roomba is given a command to move into a cell that is separated
+ from the current one by a wall, the roomba bumps into the wall and remains
+ in the current cell.
+\end_layout
+
+\begin_layout Problem
+You know the layout of the maze.
+ The maze is guaranteed to be connected, i.e., every cell can be reached from
+ any other cell via a sequence of moves in cardinal directions that does
+ not cross any walls.
+\end_layout
+
+\begin_layout Problem
+However, the starting location of the roomba is unknown.
+ The remote control has no feedback, i.e., there is no way to know if the
+ roomba bumps into a wall or successfully moves to a neighboring cell as
+ a result of any given command at any point in time.
+\end_layout
+
+\begin_layout Problem
+The goal is to determine if there exists a finite series of commands such
+ that the roomba ends up in the top left corner of the maze at the end,
+ no matter its starting position.
+\end_layout
+
+\begin_layout Standard
+To solve this problem, we will first perform a series of reductions to equivalen
+t problems.
+\end_layout
+
+\begin_layout Problem
+\begin_inset CommandInset label
+LatexCommand label
+name "prob:1-maze-rng-det"
+
+\end_inset
+
+Determine if there exists a finite series of commands after which the location
+ of the roomba becomes explicitly known, regardless of its starting position.
+\end_layout
+
+\begin_layout Standard
+Indeed, the sequence of moves leading the roomba to the top left corner
+ from any starting position is a solution for the variant problem.
+ Conversely, if there is a sequence of moves after which we know the roomba's
+ position, we can then move the roomba to the top left corner, since the
+ maze is connected.
+\end_layout
+
+\begin_layout Problem
+\begin_inset CommandInset label
+LatexCommand label
+name "prob:1-maze-all-cells-det"
+
+\end_inset
+
+A roomba is placed in every cell of the maze.
+ The goal is to determine if there is a sequence of moves that collects
+ all the rombas in the same cell.
+\end_layout
+
+\begin_layout Standard
+The equivalence follows from the fact that the unknown starting position
+ of the roomba can be modeled by randomly picking one of the roombas starting
+ in every cell of the maze.
+\end_layout
+
+\begin_layout Problem
+\begin_inset CommandInset label
+LatexCommand label
+name "prob:1-maze-2-cells-det"
+
+\end_inset
+
+Two roombas are placed in two given cells of the maze.
+ The goal is to determine if there is a sequence of commands that moves
+ both of these rombas to the same cell.
+\end_layout
+
+\begin_layout Standard
+Clearly, a procedure that collects all roombas from all possible starting
+ positions in one cell successfully solves the problem for any two roombas
+ with fixed starting positions.
+ Now suppose that for any two cells there is a sequence of commands that
+ moves two roombas starting in those two cells to the same cell.
+ Then we can derive a procedure for collecting the roombas from all starting
+ locations as follows:
+\end_layout
+
+\begin_layout Enumerate
+Keep track of the current set of distinct positions of roombas, starting
+ with all cells of the maze.
+\end_layout
+
+\begin_layout Enumerate
+If the set consists of only one location, then we are done.
+ Otherwise pick any two different positions from the set.
+\end_layout
+
+\begin_layout Enumerate
+Obtain a sequence of commands to move the roombas from these two starting
+ positions to the same cell.
+\end_layout
+
+\begin_layout Enumerate
+Update the current set of positions by applying the corresponding moves
+ to all positions in the set.
+\end_layout
+
+\begin_layout Enumerate
+Go to step 2.
+\end_layout
+
+\begin_layout Standard
+Note that if two roombas share a cell, then they end up in the same cell
+ after any move command.
+ Thus, a sequence of commands can only reduce the size of the set of all
+ distinct roomba positions.
+ Moreover, the sequence chosen in step 3 merges two distinct positions into
+ one, so our set becomes smaller by at least one element after step 4.
+ Thus, if we can solve the problem for two roombas starting in any two given
+ cells, then we can solve the problem for roombas starting in all cells
+ of the maze.
+\end_layout
+
+\begin_layout Standard
+Now let us solve the the problem for two roombas.
+ Let us label the roombas with numbers 
+\begin_inset Formula $1$
+\end_inset
+
+ and 
+\begin_inset Formula $2$
+\end_inset
+
+ and repeatedly perform the following steps.
+\end_layout
+
+\begin_layout Enumerate
+If the roombas are in the same cell, we are done.
+\end_layout
+
+\begin_layout Enumerate
+Otherwise find a shortest path from the current location of roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ to the current location of roomba 
+\begin_inset Formula $2$
+\end_inset
+
+.
+ Issue the sequence of commands moving roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ along this path from start to finish.
+\end_layout
+
+\begin_layout Enumerate
+Go to step 1.
+\end_layout
+
+\begin_layout Standard
+First we show that the sequence from step 2 cannot increase the shortest
+ path length between the roombas.
+ Note that roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ does not bump into a walls at any point in this sequence by construction.
+ Now consider roomba 
+\begin_inset Formula $2$
+\end_inset
+
+.
+ On the one hand, if a command makes it bump into a wall, then the shortest
+ path length between roombas 
+\begin_inset Formula $1$
+\end_inset
+
+ and 
+\begin_inset Formula $2$
+\end_inset
+
+ strictly decreased as a result of this move.
+ On the other hand, if a command successfully moves roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ to a neighboring cell, then there is a path between roombas 
+\begin_inset Formula $1$
+\end_inset
+
+ and 
+\begin_inset Formula $2$
+\end_inset
+
+ that has the same length as in the configuration just before this command.
+ Thus, in all cases the shortest path length between the roombas did not
+ increase.
+\end_layout
+
+\begin_layout Standard
+Next, observe that if the shortest path length between the roombas stayed
+ the same after the sequence of moves from step 2, then neither roomba bumped
+ into a wall at any point.
+ Indeed, this holds for roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ by construction, and if roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ bumps into a wall at any point, then the shortest path length strictly
+ decreases.
+\end_layout
+
+\begin_layout Standard
+Now, note that in the case where all commands resulted in a valid move for
+ both roombas, the positions of both roombas shifted closer to the boundary.
+ More formally, assume that the starting column of roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ is strictly to the left of that of roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ (up to rotation of the maze), and assume that the sequence of moves from
+ step 2 resulted in no wall bumps for roomba 
+\begin_inset Formula $2$
+\end_inset
+
+.
+ Then after that command sequence roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ ends up in a column strictly to the left of its starting column.
+ Since the maze is finite, roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ will bump into a wall after a finite number of iterations of our algorithm
+ — otherwise we can repeat our argument and conclude that roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ eventually ends up in a column out of bounds of the maze.
+ Therefore, after a finite number of iterations of our algorithm the shortest
+ path length between the roombas will strictly decrease as a result of a
+ wall bump by roomba 
+\begin_inset Formula $2$
+\end_inset
+
+.
+ And since the shortest path length is finite and is bounded from below
+ by 
+\begin_inset Formula $0$
+\end_inset
+
+, which is our exit condition, our algorithm will terminate after finitely
+ many repetitions of the main loop.
+\end_layout
+
+\begin_layout Standard
+Thus, a composition of the previously described algorithms produces a finite
+ sequence of commands that moves the two roombas to the same cell.
+\end_layout
+
+\begin_layout Standard
+Observe that once the roombas from all possible starting positions have
+ been moved to the same cell, we can move them all together to an arbitrary
+ cell in the maze.
+\end_layout
+
+\begin_layout Section
+Extension to Multiple Mazes
+\end_layout
+
+\begin_layout Subsection
+Two Mazes
+\end_layout
+
+\begin_layout Problem
+\begin_inset CommandInset label
+LatexCommand label
+name "prob:2-maze-rng-top-left"
+
+\end_inset
+
+Imagine that there are two layouts of the maze that are connected and have
+ the same size, and the roomba is placed in a random cell of a randomly
+ selected layout.
+ Is there a sequence of moves after which the roomba ends up in the top
+ left corner, no matter its starting position and no matter the maze layout?
+\end_layout
+
+\begin_layout Standard
+Observe that performing sequences of moves from the original problem for
+ each of the two mazes consecutively reduces this problem to the following.
+\end_layout
+
+\begin_layout Problem
+\begin_inset CommandInset label
+LatexCommand label
+name "prob:2-maze-rng-top-left-1"
+
+\end_inset
+
+Suppose there are two layouts of the maze that are connected and have the
+ same size.
+ Suppose the roomba is placed either in a given cell in the first maze or
+ in another given cell in the second maze.
+ Is there a sequence of moves after which the roomba ends up in the top
+ left corner in either case?
+\end_layout
+
+\begin_layout Standard
+For the sake of simplicity, we will refer to the configurations of the roomba's
+ position in the corresponding maze as roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ and roomba 
+\begin_inset Formula $2$
+\end_inset
+
+.
+ Consider the following procedure.
+\end_layout
+
+\begin_layout Enumerate
+Perform the sequence of commands moving roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ from its current position to the top left corner.
+ Update the position of roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ accordingly.
+\end_layout
+
+\begin_layout Enumerate
+If roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ is in the top left corner, we are done.
+\end_layout
+
+\begin_layout Enumerate
+Otherwise issue a sequence of commands that moves roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ from its current position to the top left corner along a shortest path.
+ Update the position of roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ accordingly.
+\end_layout
+
+\begin_layout Enumerate
+Swap labels of roombas 
+\begin_inset Formula $1$
+\end_inset
+
+ and 
+\begin_inset Formula $2$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Go to step 2.
+\end_layout
+
+\begin_layout Claim*
+After each iteration, the shortest path length from the current position
+ of roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ to the top left corner (in the corresponding maze) strictly decreases.
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $\ell$
+\end_inset
+
+ and 
+\begin_inset Formula $\ell'$
+\end_inset
+
+ denote the shortest path length before and after the sequence of commands
+ from step 3, respectively.
+\end_layout
+
+\begin_layout Proof
+First, note that 
+\begin_inset Formula $\ell'\leq\ell$
+\end_inset
+
+.
+ Indeed, by construction the sequence from step 3 contains 
+\begin_inset Formula $\ell$
+\end_inset
+
+ commands.
+ When issued to roomba 
+\begin_inset Formula $1$
+\end_inset
+
+, some of these commands may result in wall bumps, so there is a path of
+ length 
+\begin_inset Formula $\leq\ell$
+\end_inset
+
+ between the top left corner and the new position of roomba 
+\begin_inset Formula $1$
+\end_inset
+
+, and the shortest path length could be even smaller.
+ Thus, after the relabeling in step 4 we get 
+\begin_inset Formula $\ell'\leq\ell$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Now let us show that 
+\begin_inset Formula $\ell'<\ell$
+\end_inset
+
+.
+ To this end, observe that 
+\begin_inset Formula $\ell'=\ell$
+\end_inset
+
+ is only possible if roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ never bumps into a wall when it is issued the commands from step 3.
+ Since these commands move roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ from its position to the top left corner without wall bumps, the horizontal
+ and vertical position of roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ shifts by the same amount as for roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ after this sequence of moves.
+ However, the position of roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ shifts up and to the left by a non-zero amount (up to rotating and mirroring
+ the mazes, we may assume that roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ moves some columns to the left).
+ This leads to a contradiction, as the same shift for roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ would leave it out of bounds of the maze.
+\end_layout
+
+\begin_layout Standard
+To complete the proof, note that the shortest path length is finite and
+ bounded from below by 
+\begin_inset Formula $0$
+\end_inset
+
+.
+ Thus, after a finite number of iterations roomba 
+\begin_inset Formula $2$
+\end_inset
+
+ ends up in the top left corner together with roomba 
+\begin_inset Formula $1$
+\end_inset
+
+ and we are done.
+\end_layout
+
+\begin_layout Standard
+Observe that it is not always possible to move both roombas to the same
+ arbitrary cell in both mazes.
+ For example, suppose that the target cell is located at the end of a long
+ dead end that must be entered from the left in one maze and from the right
+ in the other maze.
+ Then the only position from which it is reachable is itself, so it is impossibl
+e to move both roombas to that cell simultaneously from any other pair of
+ starting positions.
+\end_layout
+
+\begin_layout Subsection
+Three Mazes
+\end_layout
+
+\begin_layout Problem
+\begin_inset CommandInset label
+LatexCommand label
+name "prob:3-maze-rng-top-left"
+
+\end_inset
+
+Imagine that there are three layouts of the maze that are connected and
+ have the same size, and the roomba is placed in a random cell of a randomly
+ selected layout.
+ Is there a sequence of moves after which the roomba ends up in the top
+ left corner, no matter its starting position and no matter the maze layout?
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+solution or counter example?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+All Connected Mazes of Same Size
+\end_layout
+
+\begin_layout Problem
+\begin_inset CommandInset label
+LatexCommand label
+name "prob:roomba-any-maze"
+
+\end_inset
+
+Suppose we only know the size of the maze and that it is connected, but
+ the layout of the maze is unknown.
+ Is there a sequence of moves after which the roomba ends up in the top
+ left corner, no matter its starting position and no matter the maze layout?
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+solution or counter example?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Extension to Labeled Digraphs
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $k\in\mathbb{Z}_{\geq1}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $D=\left(V,A\right)$
+\end_inset
+
+ be a digraph with vertex set 
+\begin_inset Formula $V$
+\end_inset
+
+ and (labeled) arc set 
+\begin_inset Formula $A$
+\end_inset
+
+ satisfying the following conditions:
+\end_layout
+
+\begin_layout Itemize
+for every vertex 
+\begin_inset Formula $v$
+\end_inset
+
+, there are 
+\begin_inset Formula $k$
+\end_inset
+
+ outgoing arcs 
+\begin_inset Formula $a_{v,1},\dots,a_{v,k}\in\delta^{+}\left(v\right)\subseteq A$
+\end_inset
+
+, some of which may be loops or may lead ;
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $D$
+\end_inset
+
+ is strongly connected, i.e., for any pair of vertices 
+\begin_inset Formula $v,u\in V$
+\end_inset
+
+ there exists a directed path from 
+\begin_inset Formula $v$
+\end_inset
+
+ to 
+\begin_inset Formula $u$
+\end_inset
+
+ along arcs from 
+\begin_inset Formula $A$
+\end_inset
+
+ and vice versa;
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+analog of boundary condition for rectangular mazes? no looping move sequences?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Other Extensions
+\end_layout
+
+\begin_layout Itemize
+Minimize number of moves
+\end_layout
+
+\begin_layout Itemize
+Unknown maze size: 
+\begin_inset Formula $2$
+\end_inset
+
+ options, range, set
+\end_layout
+
+\begin_layout Itemize
+Game: players take turns to move the roomba, the goal is to end in the top-left
+ corner, repeating positions is not allowed
+\end_layout
+
+\begin_layout Itemize
+Digraph version
+\end_layout
+
+\end_body
+\end_document
